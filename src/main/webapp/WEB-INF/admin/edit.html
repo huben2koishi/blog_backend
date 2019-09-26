@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>article</title>
+  <link rel="stylesheet" href="/static/lib/mdui.min.css">
+  <link rel="stylesheet" media="screen" href="/static/css/style.css">
+</head>
+<body class="mdui-appbar-with-toolbar
+             mdui-theme-primary-light-blue mdui-theme-accent-pink
+             mdui-drawer-body-left">
+<div id="particles-js"></div>
+
+<header class="mdui-appbar mdui-appbar-fixed">
+  <div class="mdui-toolbar mdui-color-theme ">
+    <a href="javascript:void(0);" class="mdui-btn mdui-btn-icon mdui-btn-dense mdui-ripple mdui-ripple-white"
+       mdui-drawer="{target:'#left-drawer',swipe:true}">
+      <i class="mdui-icon material-icons mdui-text-color-white">menu</i>
+    </a>
+    <span class="mdui-typo-title mdui-text-color-white">博客后台</span>
+    <div class="mdui-toolbar-spacer"></div>
+    <a href="javascript:void(0);" class="mdui-btn mdui-btn-icon">
+      <i class="mdui-icon material-icons mdui-text-color-white">search</i>
+    </a>
+    <a href="javascript:location.reload();" class="mdui-btn mdui-btn-icon">
+      <i class="mdui-icon material-icons mdui-text-color-white">refresh</i>
+    </a>
+    <a href="/" class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: '博客首页'}">
+      <i class="mdui-icon material-icons mdui-text-color-white">more_vert</i>
+    </a>
+  </div>
+</header>
+
+
+<!--抽屉-->
+<div class="mdui-drawer mdui-card mdui-drawer-open" id="left-drawer">
+  <div class="mdui-list" mdui-collapse="{accordion:true}">
+    <div class="mdui-card drawer-item">
+      <div class="mdui-card-header">
+        <img class="mdui-card-header-avatar" src="/static/img/logo.jfif"/>
+        <div class="mdui-card-header-title">こいし</div>
+      </div>
+    </div>
+
+    <div class="card-spacer"></div>
+
+    <div class="mdui-collapse-item drawer-item">
+      <div class="mdui-collapse-item-header mdui-list-item mdui-ripple">
+        <i class="mdui-list-item-icon mdui-icon material-icons">archive</i>
+        <div class="mdui-list-item-content">分类管理</div>
+        <i class="mdui-list-item-icon mdui-icon material-icons mdui-collapse-item-arrow">expand_more</i>
+      </div>
+      <div class="mdui-collapse-item-body mdui-list">
+        <a href="/admin/type/list" class="mdui-list-item mdui-ripple">文章分类</a>
+      </div>
+    </div>
+
+    <div class="mdui-divider drawer-item"></div>
+
+    <div class="mdui-collapse-item mdui-collapse-item-open drawer-item">
+      <div class="mdui-collapse-item-header mdui-list-item mdui-ripple">
+        <i class="mdui-list-item-icon mdui-icon material-icons">archive</i>
+        <div class="mdui-list-item-content">文章管理</div>
+        <i class="mdui-list-item-icon mdui-icon material-icons mdui-collapse-item-arrow">expand_more</i>
+      </div>
+      <div class="mdui-collapse-item-body mdui-list">
+        <a href="/admin/article/list" class="mdui-list-item mdui-ripple mdui-list-item-active">文章列表</a>
+        <a href="/admin/article/recycle" class="mdui-list-item mdui-ripple">回收站</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card-spacer"></div>
+
+<div class="mdui-container mdui-card">
+  <div class="mdui-card-primary">
+    <div class="mdui-card-primary-title">文章编辑</div>
+  </div>
+  <div class="mdui-card-content">
+
+    <div class="mdui-row-xs-12 mdui-valign">
+      <div class="mdui-col-xs-1">标题</div>
+      <div class="mdui-col-xs-5">
+        <div id="title" class="mdui-textfield">
+
+        </div>
+      </div>
+    </div>
+    <div class="mdui-row-xs-12 mdui-valign">
+      <div class="mdui-col-xs-1">分类</div>
+      <div class="mdui-col-xs-4">
+        <select id="select" class="mdui-select" name="typeId">
+
+        </select>
+      </div>
+    </div>
+    <div class="mdui-row-xs-12 mdui-valign">
+      <div class="mdui-col-xs-1">内容</div>
+      <div class="mdui-col-xs-11">
+        <div id="content" class="mdui-textfield">
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mdui-card-actions">
+    <button onclick="history.back();"
+            class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-green mdui-text-color-white">返回
+    </button>
+    <button id="save" class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-blue mdui-text-color-white">保存</button>
+  </div>
+</div>
+
+
+<!-- 背景粒子动画 -->
+<script src="/static/lib/particles.js"></script>
+<script src="/static/js/app.js"></script>
+
+<script src="/static/lib/mdui.min.js"></script>
+<script>
+  let flush = function () {
+    let formData = new FormData();
+    let id = location.search.substr(1).split('&')[0].split('=')[1];
+    formData.append('id', id == undefined ? '' : id);
+
+    fetch("/admin/article/edit", {
+      method: 'post',
+      body: formData
+    }).then(data => data.json())
+      .then(data => {
+        console.log(data);
+        let article = data.data.article;
+        let typeList = data.data.typeList;
+
+        let title = '';
+        title += '<input type="hidden" name="id" value="';
+        if (article != null) {
+          title += 'article.id';
+        } else {
+          title+='0';
+        }
+        title += '"/>';
+        title += '<input class="mdui-textfield-input" name="title" type="text" value="';
+        if (article != null) {
+          title += article.title;
+        }
+        title += '" required placeholder="请填写标题"/>';
+        title += '<div class="mdui-textfield-error">用户名不能为空</div>';
+        document.getElementById("title").innerHTML = '';
+        document.getElementById("title").insertAdjacentHTML("beforeend", title);
+
+        let select = '';
+        select += '<option value="">选择分类</option>';
+        for (let i = 0; i < typeList.length; i++) {
+          select += '<option ';
+          if (article != undefined && article.typeId == typeList[i].id) {
+            select += 'selected';
+          }
+          select += ' value="' + typeList[i].id + '">' + typeList[i].name + '</option>\n';
+        }
+        document.getElementById("select").innerHTML = '';
+        document.getElementById("select").insertAdjacentHTML("beforeend", select);
+
+        let content = '';
+        content += '<textarea class="mdui-textfield-input" name="contentText" placeholder="Description">';
+        if (article != null) {
+          content += article.contentText;
+        }
+        content += '</textarea>';
+        document.getElementById("content").innerHTML = '';
+        document.getElementById("content").insertAdjacentHTML("beforeend", content);
+
+        mdui.mutation();
+      });
+  };
+
+  flush();
+
+  document.getElementById("save").onclick = function () {
+    let formData = new FormData();
+    formData.append('id', document.querySelector('[name="id"]').value);
+    formData.append('title', document.querySelector('[name="title"]').value);
+    formData.append('typeId', document.querySelector('[name="typeId"]').value);
+    formData.append('contentText', document.querySelector('[name="contentText"]').value);
+
+    fetch("/admin/article/save", {
+      method: 'post',
+      body: formData
+    }).then(data => data.json())
+      .then((data => {
+        if (data.code == 1) {
+          console.log("保存成功");
+          mdui.snackbar({
+            message: data.message,
+            position: 'top',
+          });
+          setTimeout(function () {
+            window.location.href = "/admin/article/list";
+          }, 1000);
+        } else {
+          mdui.snackbar({
+            message: data.message,
+            position: 'top',
+          });
+        }
+      }));
+  };
+</script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+/* ---- particles.js container ---- */
+canvas {
+    top: 0;
+    left: 0;
+    position: fixed;
+    vertical-align: bottom;
+    z-index: -10;
+}
+
+#particles-js {
+    background-color: #fff;
+    /*background-image: url('');*/
+    background-size: cover;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+}
+
+/* ---- 自定义的 css ---- */
+.card {
+    height: 500px;
+}
+
+.card-spacer {
+    height: 12px;
+}
+
+.footer {
+    height: 56px;
+}
+
+.hide {
+    background: #000;
+}
+
+.hide:hover {
+    color: #fff;
+}
+
+.comic {
+    width: 800px;
+    margin: 0 auto;
+}
+
+#hitokoto {
+    position: fixed;
+    right: 25px;
+    top: 40%;
+}
+
+.datePicker {
+    font-size: 16px;
+    height: 38px;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.datePicker::-webkit-inner-spin-button {
+    display: none;
+}
+
+.datePicker::-webkit-clear-button {
+    display: none;
+}
+
+.search {
+    font-size: 16px;
+    height: 36px;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.search:hover {
+    height: 35px;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.search:focus {
+    height: 35px;
+
+    border-bottom: 2px solid #c51162;
+}

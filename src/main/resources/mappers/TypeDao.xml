@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.huben.blog.dao.TypeDao">
+    <select id="listAll" resultType="type">
+        SELECT *
+        FROM type
+        ORDER BY sort
+    </select>
+    
+    <insert id="save" parameterType="type">
+        INSERT INTO type(name, sort)
+        VALUES (#{name}, #{sort})
+    </insert>
+    
+    <update id="update" parameterType="type">
+        UPDATE type
+        <set>
+            <if test="name!=null">name = #{name},</if>
+            <if test="sort!=null">sort = #{sort}</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+    
+    <delete id="delete">
+        DELETE
+        FROM type
+        WHERE id IN
+        <foreach collection="array" separator="," item="id" open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

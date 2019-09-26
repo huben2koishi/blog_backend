@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.huben.blog.dao.ArticleDao">
+    <resultMap id="articleType" type="article">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="cover" property="cover"/>
+        <result column="view_count" property="viewCount"/>
+        <result column="update_time" property="updateTime"/>
+        
+        <association property="type" javaType="type">
+            <id column="type_id" property="id"/>
+            <result column="name" property="name"/>
+        </association>
+    </resultMap>
+    
+    <select id="listAll" resultMap="articleType" parameterType="map">
+        SELECT a.*, t.name
+        FROM article a
+        LEFT JOIN type t on a.type_id = t.id
+        <where>
+            <if test="status!=null and status!=''">
+                AND status=#{status}
+            </if>
+            <if test="typeId!=null and typeId!=''">
+                AND type_id=#{typeId}
+            </if>
+            <if test="keyword!=null and keyword!=''">
+                AND title LIKE concat('%',#{keyword},'%')
+            </if>
+            <if test="startDate!=null and startDate!='' and endDate!=null and endDate!=''">
+                AND update_time BETWEEN #{startDate} AND #{endDate}
+            </if>
+        </where>
+        ORDER BY update_time DESC
+    </select>
+    
+    <select id="selectById" resultType="article">
+        SELECT *
+        FROM article
+        WHERE id = #{id}
+    </select>
+    
+    <insert id="save" parameterType="article">
+        INSERT INTO article(title, content, content_text, cover, view_count, update_time, status, type_id)
+        VALUES (#{title}, #{content}, #{contentText}, #{cover}, 0, #{updateTime}, 1, #{typeId})
+    </insert>
+    
+    <update id="update" parameterType="article">
+        UPDATE article
+        <set>
+            <if test="title!=null">title = #{title},</if>
+            <if test="content!=null">content = #{content},</if>
+            <if test="contentText!=null">content_text = #{contentText},</if>
+            <if test="cover!=null">cover = #{cover},</if>
+            <if test="updateTime!=null">update_time = #{updateTime},</if>
+            <if test="typeId!=null">type_id = #{typeId}</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+    
+    <update id="remove">
+        UPDATE article
+        SET status = 0
+        WHERE id IN
+        <foreach collection="array" separator="," item="id" open="(" close=")">
+            #{id}
+        </foreach>
+    </update>
+    <update id="cancel">
+        UPDATE article
+        SET status = 1
+        WHERE id IN
+        <foreach collection="array" separator="," item="id" open="(" close=")">
+            #{id}
+        </foreach>
+    </update>
+    <delete id="delete">
+        DELETE FROM article
+        WHERE id IN
+        <foreach collection="array" separator="," item="id" open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+    <select id="countByTypeId" resultType="_int">
+        SELECT count(*)
+        FROM article WHERE status=1 AND type_id IN
+        <foreach collection="array" separator="," item="typeId" open="(" close=")">
+            #{typeId}
+        </foreach>
+    </select>
+    <delete id="deleteByTypeId">
+        DELETE
+        FROM article WHERE status=0 AND type_id IN
+        <foreach collection="array" separator="," item="typeId" open="(" close=")">
+            #{typeId}
+        </foreach>
+    </delete>
+</mapper>

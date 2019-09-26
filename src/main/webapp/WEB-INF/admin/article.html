@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>article</title>
+  <link rel="stylesheet" href="/static/lib/mdui.min.css">
+  <link rel="stylesheet" media="screen" href="/static/css/style.css">
+</head>
+<body class="mdui-appbar-with-toolbar
+             mdui-theme-primary-light-blue mdui-theme-accent-pink
+             mdui-drawer-body-left">
+<div id="particles-js"></div>
+
+<header class="mdui-appbar mdui-appbar-fixed">
+  <div class="mdui-toolbar mdui-color-theme ">
+    <a href="javascript:void(0);" class="mdui-btn mdui-btn-icon mdui-btn-dense mdui-ripple mdui-ripple-white"
+       mdui-drawer="{target:'#left-drawer',swipe:true}">
+      <i class="mdui-icon material-icons mdui-text-color-white">menu</i>
+    </a>
+    <span class="mdui-typo-title mdui-text-color-white">博客后台</span>
+    <div class="mdui-toolbar-spacer"></div>
+    <a href="javascript:void(0);" class="mdui-btn mdui-btn-icon">
+      <i class="mdui-icon material-icons mdui-text-color-white">search</i>
+    </a>
+    <a href="javascript:location.reload();" class="mdui-btn mdui-btn-icon">
+      <i class="mdui-icon material-icons mdui-text-color-white">refresh</i>
+    </a>
+    <a href="/" class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: '博客首页'}">
+      <i class="mdui-icon material-icons mdui-text-color-white">more_vert</i>
+    </a>
+  </div>
+</header>
+
+
+<!--抽屉-->
+<div class="mdui-drawer mdui-card mdui-drawer-open" id="left-drawer">
+  <div class="mdui-list" mdui-collapse="{accordion:true}">
+    <div class="mdui-card drawer-item">
+      <div class="mdui-card-header">
+        <img class="mdui-card-header-avatar" src="/static/img/logo.jfif"/>
+        <div class="mdui-card-header-title">こいし</div>
+      </div>
+    </div>
+
+    <div class="card-spacer"></div>
+
+    <div class="mdui-collapse-item drawer-item">
+      <div class="mdui-collapse-item-header mdui-list-item mdui-ripple">
+        <i class="mdui-list-item-icon mdui-icon material-icons">archive</i>
+        <div class="mdui-list-item-content">分类管理</div>
+        <i class="mdui-list-item-icon mdui-icon material-icons mdui-collapse-item-arrow">expand_more</i>
+      </div>
+      <div class="mdui-collapse-item-body mdui-list">
+        <a href="/admin/type/list" class="mdui-list-item mdui-ripple">文章分类</a>
+      </div>
+    </div>
+
+    <div class="mdui-divider drawer-item"></div>
+
+    <div class="mdui-collapse-item mdui-collapse-item-open drawer-item">
+      <div class="mdui-collapse-item-header mdui-list-item mdui-ripple">
+        <i class="mdui-list-item-icon mdui-icon material-icons">archive</i>
+        <div class="mdui-list-item-content">文章管理</div>
+        <i class="mdui-list-item-icon mdui-icon material-icons mdui-collapse-item-arrow">expand_more</i>
+      </div>
+      <div class="mdui-collapse-item-body mdui-list">
+        <a href="/admin/article/list" class="mdui-list-item mdui-ripple mdui-list-item-active">文章列表</a>
+        <a href="/admin/article/recycle" class="mdui-list-item mdui-ripple">回收站</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card-spacer"></div>
+<div id="content" class="mdui-container">
+  <div class="mdui-card-primary">
+    <div class="mdui-card-primary-title">文章管理</div>
+  </div>
+  <div class="mdui-card-content">
+
+    <div class="mdui-row-xs-12">
+
+      <div class="mdui-col-xs-1">
+        <a href="/admin/article/edit" class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-blue mdui-text-color-white">添加</a>
+      </div>
+
+      <div class="mdui-col-xs-1">
+        <button id="remove" class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-red mdui-text-color-white">删除
+        </button>
+      </div>
+
+      <span class="mdui-float-right">
+        <span style="width: 120px;">
+          <select id="select" class="mdui-select" >
+
+          </select>
+        </span>
+
+        <span style="width: 120px;">
+          <input class="datePicker" type="date"/>
+        </span>
+至
+        <span style="width: 120px;">
+          <input class="datePicker" type="date"/>
+        </span>
+
+        <span style="width: 120px;">
+          <input id="keyword" class="search" type="text" placeholder="请输入关键词"/>
+        </span>
+
+        <span style="width: 120px;">
+          <button onclick="flush(1)" class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-blue mdui-text-color-white">搜索</button>
+        </span>
+      </span>
+
+    </div>
+
+
+    <div class="card-spacer"></div>
+
+    <table class="mdui-table mdui-table-selectable">
+      <thead>
+      <tr>
+        <th>序号</th>
+        <th>分类</th>
+        <th>标题</th>
+        <th>更新时间</th>
+        <th>阅读量</th>
+        <th>修改</th>
+      </tr>
+      </thead>
+      <tbody id="tbody">
+
+      </tbody>
+    </table>
+
+    <div class="card-spacer"></div>
+
+    <div id="page" class="mdui-center"></div>
+  </div>
+</div>
+
+
+<!-- 背景粒子动画 -->
+<script src="/static/lib/particles.js"></script>
+<script src="/static/js/app.js"></script>
+
+<script src="/static/lib/mdui.min.js"></script>
+<script>
+  let flush = function (pageNum) {
+    let formData = new FormData();
+    formData.append('pageNum', pageNum);
+    formData.append('typeId', document.getElementById('select').value);
+    formData.append('startDate', document.querySelectorAll('.datePicker')[0].value);
+    formData.append('endDate', document.querySelectorAll('.datePicker')[1].value);
+    formData.append('keyword', document.getElementById('keyword').value);
+
+    fetch("/admin/article/list", {
+      method: 'post',
+      body: formData
+    }).then(data => data.json())
+      .then(data => {
+        console.log(data);
+        let pageInfo = data.data.pageInfo;
+        let articleList = pageInfo.list;
+        let typeList = data.data.typeList;
+
+        let select = '';
+        select += '<option value="">选择分类</option>';
+        for (let i = 0; i < typeList.length; i++) {
+          select += '<option ';
+          if (data.data.typeId != undefined && (i + 1) == data.data.typeId) {
+            select += 'selected';
+          }
+          select += ' value="' + typeList[i].id + '">' + typeList[i].name + '</option>\n';
+        }
+        document.getElementById("select").innerHTML = '';
+        document.getElementById("select").insertAdjacentHTML("beforeend", select);
+
+        let html = '';
+        for (let i = 0; i < articleList.length; i++) {
+          html += '<tr>';
+          html += '<input  type="hidden" name="id" value="' + articleList[i].id + '"/>';
+          html += '<td>' + (i + 1) + '</td>';
+          html += '<td>' + articleList[i].type.name + '</td>';
+          html += '<td>' + articleList[i].title + '</td>';
+          html += '<td>' + articleList[i].updateTime + '</td>';
+          html += '<td>' + articleList[i].viewCount + '</td>';
+          html += '<td><a href="/admin/article/edit?id=' + articleList[i].id + '" class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-yellow">编辑</a><td/>';
+          html += '</tr>';
+        }
+
+        document.getElementById("tbody").innerHTML = '';
+        document.getElementById("tbody").insertAdjacentHTML("beforeend", html);
+
+
+        let page = '';
+        page += '<div class="mdui-btn-group">';
+        page += '<button onclick="flush(' + (pageInfo.pageNum - 1) + ')" class="mdui-btn mdui-btn-raised mdui-btn-icon mdui-ripple" ';
+        if (!pageInfo.hasPreviousPage) {
+          page += 'disabled'
+        }
+        page += '><i class="mdui-icon material-icons">keyboard_arrow_left</i></button>';
+
+        for (let i = 1; i <= pageInfo.pages; i++) {
+          page += '<button type="button" class="mdui-btn mdui-btn-raised mdui-ripple ';
+          if (i == pageInfo.pageNum) {
+            page += 'mdui-btn-active';
+          }
+          page += '" onclick="flush(' + i + ')">' + i + '</button>';
+        }
+
+        page += '<button onclick="flush(' + (pageInfo.pageNum + 1) + ')" class="mdui-btn mdui-btn-raised mdui-btn-icon mdui-ripple" ';
+        if (!pageInfo.hasNextPage) {
+          page += 'disabled'
+        }
+        page += '><i class="mdui-icon material-icons">keyboard_arrow_right</i></button>';
+        page += '</div>';
+
+        document.getElementById("page").innerHTML = '';
+        document.getElementById("page").insertAdjacentHTML("beforeend", page);
+
+        mdui.mutation();
+        mdui.updateTables();
+      });
+  };
+
+  flush(1);
+
+  document.getElementById("remove").onclick = function () {
+    let formData = new FormData(), ids = [];
+    document.querySelectorAll('.mdui-table-row-selected').forEach(function (element) {
+      if (element.children[1].value != "") {
+        formData.append('ids', element.children[1].value);
+        ids.push(element.children[1].value)
+      }
+    });
+    console.log(ids);
+
+    if (ids.length == 0) {
+      mdui.snackbar({
+        message:"请选择要删除的文章",
+        position: 'top',
+      });
+    } else {
+      fetch("/admin/article/remove", {
+        method: 'post',
+        body: formData,
+      }).then(data => data.json())
+        .then(data => {
+          if (data.code == 1) {
+            console.log(data.message);
+            mdui.snackbar({
+              message: data.message,
+              position: 'top',
+            });
+            setTimeout(flush(1), 1000);
+          } else {
+            mdui.snackbar({
+              message: data.message,
+              position: 'top',
+            });
+          }
+        });
+    }
+  };
+</script>
+</body>
+</html>
